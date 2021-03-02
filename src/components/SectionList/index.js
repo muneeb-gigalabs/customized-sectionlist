@@ -42,7 +42,7 @@ const SectionListComponent = () => {
   useEffect(() => {
     if (
       data.length === 10 ||
-      (prevState && prevState.data && prevState.data.title !== data[0].title)
+      (prevState && prevState.data && prevState.data.key !== data[0].key)
     )
     scrollToSection();
   }, [data]);
@@ -85,9 +85,9 @@ const SectionListComponent = () => {
 
   const onViewableItemsChanged = (item) => {
     let titlesDisplayed = item.viewableItems.map(
-      (singleItem) => singleItem.section.title
+      (singleItem) => singleItem.section.key
     );
-    if (!titlesDisplayed.includes(data[0].title)) {
+    if (!titlesDisplayed.includes(data[0].key)) {
       setFetchPrevious(true);
       return;
     }
@@ -97,7 +97,7 @@ const SectionListComponent = () => {
         changed = item.changed;
         for (let i = 0; i < changed.length; i++) {
           const element = changed[i];
-          if (element.isViewable && element.section.title === data[0].title) {
+          if (element.isViewable && element.section.key === data[0].key) {
             onRefresh();
             return;
           }
