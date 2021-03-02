@@ -5,6 +5,7 @@ import {
   View,
   SafeAreaView,
   SectionList,
+  Platform
 } from 'react-native';
 import Constants from 'expo-constants';
 import _ from 'lodash';
@@ -22,7 +23,7 @@ const ITEM_HEIGHT = 50;
 
 const SectionListComponent = () => {
   const [previousPageNo, setPreviousPageNo] = useState(1);
-  const [bottomPageNo, setBottomPageNo] = useState(1);
+  const [nextPageNo, setNextPageNo] = useState(1);
   const [nextMore, setNextMore] = useState(true);
   const [previousMore, setPreviousMore] = useState(true);
   const [data, setData] = useState([]);
@@ -43,11 +44,11 @@ const SectionListComponent = () => {
       data.length === 10 ||
       (prevState && prevState.data && prevState.data.title !== data[0].title)
     )
-      scrollToSection();
+    scrollToSection();
   }, [data]);
 
   useEffect(() => {
-    let nextResult = getData(bottomPageNo, 5);
+    let nextResult = getData(nextPageNo, 5);
     let previousResult = previousData(previousPageNo, 5);
     let finalData = [...data];
     if (nextResult.data && nextResult.data.length) {
@@ -60,15 +61,15 @@ const SectionListComponent = () => {
     setPreviousMore(previousResult.hasMore);
     setNextMore(nextResult.hasMore);
     setPreviousPageNo(previousPageNo + 1);
-    setBottomPageNo(bottomPageNo + 1);
+    setNextPageNo(nextPageNo + 1);
   }, []);
 
   const onEndReached = () => {
     if (nextMore) {
-      let result = getData(bottomPageNo, 5);
+      let result = getData(nextPageNo, 5);
       setData([...data, ...result.data]);
       setNextMore(result.hasMore);
-      setBottomPageNo(bottomPageNo + 1);
+      setNextPageNo(nextPageNo + 1);
     }
   };
 
@@ -123,7 +124,7 @@ const SectionListComponent = () => {
   });
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={Platform.OS === 'web' ? styles.webContainer : styles.container}>
       <SectionList
         ref={sectionListRef}
         sections={data}
@@ -132,9 +133,11 @@ const SectionListComponent = () => {
         renderSectionHeader={({ section: { title } }) => (
           <Text style={styles.header}>{title}</Text>
         )}
-        onEndReached={() => onEndReached()}
-        onEndReachedThreshold={0.1}
+        initialNumToRender={3}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.5}
         onViewableItemsChanged={(change) => onViewableItemsChanged(change)}
+        onScrollToIndexFailed={()=>{}}
         getItemLayout={getItemLayout}
       />
     </SafeAreaView>
@@ -144,15 +147,19 @@ const SectionListComponent = () => {
 export default SectionListComponent;
 
 const styles = StyleSheet.create({
+  webContainer: {
+    height: '90vh',
+    width: '50%'
+  },
   container: {
     flex: 1,
     marginTop: Constants.statusBarHeight,
-    marginHorizontal: 16,
+    width: '80%'
   },
   item: {
     height: ITEM_HEIGHT,
     backgroundColor: '#f9c2ff',
-    padding: 20,
+    padding: 10,
     marginVertical: 8,
   },
   header: {
