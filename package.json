@@ -17,7 +17,8 @@
     "react-native-svg": "^12.1.0",
     "react-native-web": "~0.13.12",
     "react-native-web-refresh-control": "^1.0.3",
-    "tailwind-rn": "^3.0.1"
+    "tailwind-rn": "^3.0.1",
+    "tailwindcss": "^2.0.3"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0"

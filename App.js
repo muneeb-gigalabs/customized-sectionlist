@@ -2,11 +2,12 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import SectionListComponent from './src/components/SectionList'
+import CustomDatePicker from './src/components/CustomDatePicker';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <SectionListComponent />
+      <CustomDatePicker />
       <StatusBar style="auto" />
     </View>
   );
