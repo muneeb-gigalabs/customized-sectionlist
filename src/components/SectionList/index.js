@@ -21,6 +21,7 @@ const SectionListComponent = () => {
   const [nextPageNo, setNextPageNo] = useState(1);
   const [nextMore, setNextMore] = useState(true);
   const [previousMore, setPreviousMore] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -49,12 +50,16 @@ const SectionListComponent = () => {
     }
   };
 
-  const onTopReached = () => {
+  const onRefresh = () => {
+    setRefreshing(true);
     if (previousMore) {
       let result = previousData(previousPageNo, pageSize);
       setData([...result.data, ...data]);
+      setRefreshing(false);
       setPreviousMore(result.hasMore);
       setPreviousPageNo(previousPageNo + 1);
+    } else {
+      setRefreshing(false);
     }
   };
 
@@ -81,7 +86,10 @@ const SectionListComponent = () => {
         onScrollToIndexFailed={() => {}}
         getItemLayout={getItemLayout}
         pageSize={pageSize}
-        onTopReached={onTopReached}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        setRefreshing={(val) => setRefreshing(val)}
+        enableUpwardLoadMore={false}
       />
     </SafeAreaView>
   );
