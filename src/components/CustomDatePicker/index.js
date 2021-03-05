@@ -29,46 +29,37 @@ const MONTH_NAMES = [
 ];
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-const CustomDatePicker = ({label = "Select Date"}) => {
+const CustomDatePicker = ({label, value, onChange}) => {
   const [showDatepicker, setShowDatepicker] = useState(false);
-  const [datepickerValue, setDatepickerValue] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
   const [noOfDays, setNoOfDays] = useState([]);
   const [days] = useState(DAYS);
 
   useEffect(() => {
-    console.log('datepickerValue = ', datepickerValue);
-  }, [datepickerValue]);
-
-  const initDate = () => {
-    let today = new Date();
-    setMonth(today.getMonth());
-    setYear(today.getFullYear());
-    setDatepickerValue(
-      new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate()
-      ).toDateString()
-    );
+    let initialDate = new Date();
+    if(value && value instanceof Date) {
+      initialDate = new Date(value);
+    }
+    setMonth(initialDate.getMonth());
+    setYear(initialDate.getFullYear());
     getNoOfDays();
-  };
-
-  useEffect(() => {
-    initDate();
   }, []);
 
   const isToday = (date) => {
     const today = new Date();
     const d = new Date(year, month, date);
-
     return today.toDateString() === d.toDateString() ? true : false;
   };
 
+  const isSelected = (date) => {
+    const selectedDate = new Date(value);
+    return selectedDate.getDate() === date && selectedDate.getMonth() === month && selectedDate.getFullYear() === year
+  }
+
   const getDateValue = (date) => {
     let selectedDate = new Date(year, month, date);
-    setDatepickerValue(selectedDate.toDateString());
+    onChange(selectedDate.toDateString());
     setShowDatepicker(false);
   };
 
@@ -148,12 +139,12 @@ const CustomDatePicker = ({label = "Select Date"}) => {
               style={sheetStyles.hiddenInputStyle}
               type="hidden"
               name="date"
-              value={datepickerValue}
+              value={value}
             />
             <TextInput
               type="text"
               editable={false}
-              value={datepickerValue}
+              value={value}
               style={
                 showDatepicker
                   ? sheetStyles.inputStyleFocused
@@ -260,7 +251,7 @@ const CustomDatePicker = ({label = "Select Date"}) => {
                               <TouchableOpacity
                                 key={index}
                                 style={
-                                  isToday(date) == true
+                                  isSelected(date)
                                     ? sheetStyles.selectedDateNumberStyle
                                     : sheetStyles.dateNumberStyle
                                 }
@@ -268,7 +259,7 @@ const CustomDatePicker = ({label = "Select Date"}) => {
                               >
                                 <Text
                                   style={
-                                    isToday(date) === true
+                                    isSelected(date)
                                       ? sheetStyles.highlightedDateTextStyle
                                       : sheetStyles.dateTextStyle
                                   }
