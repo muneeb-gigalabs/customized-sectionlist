@@ -53,6 +53,9 @@ const CustomDatePicker = ({label, value, onChange}) => {
   };
 
   const isSelected = (date) => {
+    if(!value){
+      return isToday(date)
+    }
     const selectedDate = new Date(value);
     return selectedDate.getDate() === date && selectedDate.getMonth() === month && selectedDate.getFullYear() === year
   }
